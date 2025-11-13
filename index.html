@@ -1,54 +1,601 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yasin Ahmad</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yasin Ahmad - CV</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+      --text-color: #333;
+      --border-radius: 5px;
+      --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      line-height: 1.6;
+      margin: 30px;
+    }
+
+    .container {
+      max-width: 797px;
+      margin: 0 auto;
+      padding: 20px;
+      padding: 30px;
+    }
+
+    header {
+      padding-top: 30px;
+      border-radius: var(--border-radius);
+    }
+
+    header.editing {
+      outline: 3px dashed var(--secondary-color);
+      outline-offset: 6px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .personal-info h1 {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      font-style: italic;
+    }
+
+    .personal-info h2 {
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 15px;
+      font-style: italic;
+      color: gray;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+      gap: 5px;
+    }
+
+    .contact-info a {
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .contact-info a:hover {
+      color: var(--secondary-color);
+    }
+
+    .contact-info span {
+      cursor: text;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .download-btn {
+      background-color: var(--accent-color);
+    }
+
+    .download-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .cv-content.editing {
+      outline: 3px dashed var(--secondary-color);
+      outline-offset: 6px;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .section-form {
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .section-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .cv-content {
+      border-radius: var(--border-radius);
+    }
+
+    .cv-section {
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .cv-section h3 {
+      color: var(--primary-color);
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .add-item-btn {
+      display: none;
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .cv-content.editing .add-item-btn {
+      display: inline-block;
+    }
+
+    /* Updated Experience Section Layout - More Specific Selectors */
+    .cv-section .experience-item {
+      display: flex !important;
+      margin-bottom: 25px !important;
+      gap: 20px !important;
+    }
+
+    .cv-section .experience-date {
+      flex: 0 0 120px !important;
+      font-weight: 600 !important;
+      color: var(--secondary-color) !important;
+      text-align: right !important;
+      padding-top: 2px !important;
+    }
+
+    .cv-section .experience-content {
+      flex: 1 !important;
+      border-left: 2px solid #e0e0e0 !important;
+      padding-left: 20px !important;
+      min-width: 0;
+      /* Prevents flex item from overflowing */
+    }
+
+    .cv-section .job-title {
+      font-weight: 600 !important;
+      margin-bottom: 5px !important;
+      font-size: 1.1rem !important;
+    }
+
+    .cv-section .company {
+      font-style: italic !important;
+      margin-bottom: 10px !important;
+      color: #666 !important;
+    }
+
+    .cv-section .experience-content ul {
+      padding-left: 20px !important;
+    }
+
+    .cv-section .experience-content li {
+      margin-bottom: 8px !important;
+      line-height: 1.5 !important;
+    }
+
+    /* Education Section - Same layout as Experience */
+    .cv-section .education-item {
+      display: flex !important;
+      margin-bottom: 20px !important;
+      gap: 20px !important;
+    }
+
+    .cv-section .education-date {
+      flex: 0 0 120px !important;
+      font-weight: 600 !important;
+      color: var(--secondary-color) !important;
+      text-align: right !important;
+      padding-top: 2px !important;
+    }
+
+    .cv-section .education-content {
+      flex: 1 !important;
+      border-left: 2px solid #e0e0e0 !important;
+      padding-left: 20px !important;
+      min-width: 0;
+    }
+
+    .cv-section .education-title {
+      font-weight: 600 !important;
+      margin-bottom: 5px !important;
+    }
+
+    .cv-section .education-institution {
+      font-style: italic !important;
+      color: #666 !important;
+    }
+
+    ul {
+      padding-left: 70px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    .skill-category h4 {
+      margin-bottom: 10px;
+      color: var(--dark-color);
+    }
+
+    .custom-section {
+      padding: 15px;
+      border-left: 4px solid var(--secondary-color);
+      margin-bottom: 20px;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    }
+
+    .custom-section h4 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .contact-info {
+        margin-top: 15px;
+        align-items: center;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cv-section .experience-item,
+      .cv-section .education-item {
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+
+      .cv-section .experience-date,
+      .cv-section .education-date {
+        text-align: left !important;
+        flex: none !important;
+      }
+
+      .cv-section .experience-content,
+      .cv-section .education-content {
+        border-left: none !important;
+        border-top: 2px solid #e0e0e0 !important;
+        padding-left: 0 !important;
+        padding-top: 10px !important;
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 font-[Poppins]">
+<body>
 
-  <!-- Main Container -->
-  <div id="cv-content" class="max-w-5xl mx-auto my-10 bg-white shadow-lg flex flex-col lg:flex-row print:shadow-none">
+  <div class="container">
+    <div class="controls">
+      <button id="add-section-btn">Add Custom Section</button>
+      <button id="edit-btn">Edit CV</button>
+      <button id="download-btn" class="download-btn">Download as PDF</button>
+    </div>
 
-    <!-- Left Section -->
-    <div class="lg:w-1/3 bg-[#0b1c3f] text-white p-6 flex-shrink-0">
-      <div class="text-center">
-        <h2 class="text-2xl md:text-3xl font-semibold mt-4">Yasin Ahmad</h2>
-        <p class="text-white text-lg md:text-xl border-b border-white">MERN Stack Developer</p>
-      </div>
+    <div id="section-form" class="section-form">
+      <h3>Add Custom Section</h3>
+      <form id="custom-section-form">
+        <div class="form-group">
+          <label for="section-title">Section Title</label>
+          <input type="text" id="section-title" required>
+        </div>
+        <div class="form-group">
+          <label for="section-content">Content</label>
+          <textarea id="section-content" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="cancel-section-btn">Cancel</button>
+          <button type="submit">Add Section</button>
+        </div>
+      </form>
+    </div>
 
-      <!-- Contact -->
-      <div class="mt-6 md:mt-10">
-        <h3 class="text-lg font-semibold border-b border-white pb-1 mb-2">Contact Details</h3>
-        <p class="text-sm md:text-base leading-6">
-          📞 +92 3411190506<br />
-          ✉️ <a href="mailto:yasinahmad919@gmail.com" class="text-blue-300 hover:underline">yasinahmad919@gmail.com</a><br />
-          📍 Gumbad Maira, Mingora Swat<br />
-          <a href="https://www.linkedin.com/in/yasin-ahmad-9263331b2" class="text-gray-100 hover:text-blue-600 hover:underline">LinkedIn</a><br />
-          <a href="https://my-portfolio-sandy-six-67.vercel.app/" class="hover:text-gray-300 border-b border-white text-base md:text-lg">My Portfolio</a>
-        </p>
-      </div>
+    <div id="item-form" class="section-form">
+      <h3>Add Item</h3>
+      <form id="item-form-content">
+        <div class="form-group">
+          <label for="item-section">Section</label>
+          <select id="item-section" required>
+            <option value="">Select a section</option>
+            <option value="experience">Experience</option>
+            <option value="education">Education</option>
+            <option value="skills">Skills</option>
+            <option value="certifications">Certifications</option>
+            <option value="technical">Technical Proficiencies</option>
+            <option value="languages">Multilingual Communication</option>
+            <option value="curriculum">Curriculum Projects</option>
+            <option value="achievements">During Studies Achievements</option>
+          </select>
+        </div>
+        <div class="form-group" id="date-group">
+          <label for="item-date">Date/Period</label>
+          <input type="text" id="item-date" placeholder="e.g., 2020 - 2024">
+        </div>
+        <div class="form-group">
+          <label for="item-title">Title</label>
+          <input type="text" id="item-title" required>
+        </div>
+        <div class="form-group">
+          <label for="item-subtitle">Subtitle/Institution/Company</label>
+          <input type="text" id="item-subtitle">
+        </div>
+        <div class="form-group">
+          <label for="item-description">Description</label>
+          <textarea id="item-description" placeholder="Enter details or bullet points (one per line)"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="cancel-item-btn">Cancel</button>
+          <button type="submit">Add Item</button>
+        </div>
+      </form>
+    </div>
 
-      <!-- Language & Tools -->
-      <div class="mt-6 md:mt-10">
-        <h3 class="text-lg font-semibold border-b border-white pb-1 mb-2">Language and Tools</h3>
-        <div class="text-sm md:text-base space-y-2">
-          <div>HTML5<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[85%]"></div></div></div>
-          <div>CSS3<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[70%]"></div></div></div>
-          <div>JavaScript (ES6+)<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[75%]"></div></div></div>
-          <div>Tailwind CSS<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[90%]"></div></div></div>
-          <div>React.js<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[80%]"></div></div></div>
-          <div>Node.js<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[70%]"></div></div></div>
-          <div>Express.js<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[75%]"></div></div></div>
-          <div>MongoDB<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[75%]"></div></div></div>
-          <div>RESTful APIs<div class="bg-white rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full w-[75%]"></div></div></div>
+    <header id="cv-header">
+      <div class="header-content">
+        <div class="personal-info">
+          <h1>Yasin Ahmad</h1>
+          <h2>Mern Stack Developer</h2>
+        </div>
+        <div class="contact-info">
+          <a href="tel:+923411190506">+923411190506</a>
+          <a href="mailto:yasinahmad919@gmail.com">yasinahmad919@gmail.com
+            <a href="https://www.linkedin.com/in/yasin-ahmad-9263331b2" target="_blank">LinkedIn Profile</a>
+            <a href="https://my-portfolio-sandy-six-67.vercel.app/"
+              class="hover:text-gray-300 border-b border-white text-base md:text-lg">My Portfolio</a>
+            <span>Mingora Swat! Pakistan.</span>
         </div>
       </div>
+    </header>
 
-      <!-- Skills -->
+    <div id="cv-content" class="cv-content">
+      <div class="cv-section">
+        <h3>Objective <button class="add-item-btn" data-section="objective">+ Add</button></h3>
+        <p>Results-driven MERN Stack Developer and Software Engineering Graduate from COMSATS University Islamabad,
+          Abbottabad Campus, with 2+ years of professional experience in both backend and frontend web development.
+          Proficient in Node.js, Express.js, MongoDB, and React.js. Possesses strong analytical and problem-solving
+          skills, with a passion for writing clean, scalable code and developing efficient, user-friendly web
+          applications.</p>
+
+      </div>
+
+      <div class="cv-section">
+        <h3>Experience <button class="add-item-btn" data-section="experience">+ Add</button></h3>
+
+        <div class="experience-item">
+          <div class="experience-date">April 2025 – Present</div>
+          <div class="experience-content">
+            <div class="job-title">Backend Developer </div>
+            <div class="company">| MAX Tech, Swat- Present</div>
+            <ul>
+              <li>Develop RESTful APIs using Node.js and Express.js.</li>
+              <li>Designed optimized MongoDB schemas for high performance.</li>
+              <li>Implemented JWT-based authentication and authorization.</li>
+              <li>Integrated third-party APIs to extend functionality.</li>
+              <li>Collaborated with frontend teams for API integration.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="experience-item">
+          <div class="experience-date">Feb 2024 – Mar 2025</div>
+          <div class="experience-content">
+            <div class="job-title">Frontend Developer</div>
+            <div class="company">MAX Tech, Swat</div>
+            <ul>
+               <li>Developed responsive UIs using React.js and Tailwind CSS.</li>
+            <li>Optimized performance and reduced load times by 40%.</li>
+            <li>Worked closely with backend teams for dynamic features.</li>
+            <li>Ensured cross-browser and mobile compatibility.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="experience-item">
+          <div class="experience-date">Jan 2023 – Dec 2023</div>
+          <div class="experience-content">
+            <div class="job-title">Junior Web Developer</div>
+            <div class="company">| Freelance</div>
+            <ul>
+              <li>Built portfolio websites using MERN stack.</li>
+            <li>Performed testing and debugging before client delivery.</li>
+            <li>Delivered tailored web solutions based on client needs.</li>
+            </ul>
+          </div>
+        </div>
+
+        
+
+        
+
+      <div class="cv-section">
+        <h3>Education <button class="add-item-btn" data-section="education">+ Add</button></h3>
+        <div class="education-item">
+          <div class="education-date">2018 – 2022</div>
+          <div class="education-content">
+            <div class="education-title">BS Software Engineering</div>
+            <div class="education-institution">COMSATS University Islamabad – Abbottabad Campus</div>
+          </div>
+        </div>
+
+        <div class="education-item">
+          <div class="education-date">2016 – 2018</div>
+          <div class="education-content">
+            <div class="education-title">Pre-Engineering</div>
+            <div class="education-institution">Government Post Graduate Jahanzeb College, Swat</div>
+          </div>
+        </div>
+
+        <div class="education-item">
+          <div class="education-date">2014 - 2016</div>
+          <div class="education-content">
+            <div class="education-title">Intermediate</div>
+            <div class="education-institution">Swat Children Academy, Mingora</div>
+          </div>
+        </div>
+
+       
+
+      <!-- Rest of the CV sections remain the same -->
+      <!-- <div class="cv-section">
+        <h3>Skills & Abilities <button class="add-item-btn" data-section="skills">+ Add</button></h3>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <h4>Financial Reporting and Analysis</h4>
+            <ul>
+              <li>Expertise in preparing GAAP-compliant financial statements (P&L, balance sheets, cash
+                flow) with 100% accuracy.</li>
+              <li>Skilled in reconciling accounts payable/receivable and auditing inventory (e.g., 98%
+                accuracy at Shaharyar Traders).</li>
+              <li>Conducted internal audits for 10+ branches, resolving discrepancies and improving
+                compliance by 30%.</li>
+              <li>Familiar with IFRS, TIA/EIA standards, and Saudi Arabian financial regulations.</li>
+            </ul>
+          </div>
+
+          <div class="skill-category">
+            <h4>Accounting Software</h4>
+            <ul>
+              <li>Proficient in QuickBooks, Primavera, and advanced Excel for financial modeling, reducing
+                monthly closing time by 20%.</li>
+              <li>Experienced in automating workflows to minimize manual errors and enhance reporting
+                efficiency.</li>
+            </ul>
+          </div>
+
+          <div class="skill-category">
+            <h4>Budgeting & Forecasting</h4>
+            <ul>
+              <li>Developed budget frameworks for IPO accounts and payroll management, optimizing resource
+                allocation for 200+ employees.</li>
+              <li>Analyzed foreign currency transactions to mitigate financial risks and ensure liquidity.
+              </li>
+            </ul>
+          </div>
+
+          <div class="skill-category">
+            <h4>Leadership & Team Management</h4>
+            <ul>
+              <li>Led cross-functional teams of 20+ educators and banquet staff, achieving 100%
+                client/student satisfaction.</li>
+              <li>Trained staff in curriculum development and conflict resolution strategies.</li>
+            </ul>
+          </div>
+
+          <div class="skill-category">
+            <h4>Curriculum Development & Academic Leadership</h4>
+            <ul>
+              <li>Designed SLO/ALO frameworks for 500+ students, boosting exam pass rates by 15%.</li>
+              <li>Organized international competitions (e.g., Copernicus USA) and career counseling
+                workshops.</li>
+            </ul>
+          </div>
+
+          <div class="skill-category">
+            <h4>Research & Problem Solving</h4>
+            <ul>
+              <li>Published peer-reviewed research on capital structure dynamics (KSE100 Study).</li>
+              <li>Conducted SWOT analysis of PepsiCo and authored projects on Pakistan's economic
+                challenges.</li>
+            </ul>
+          </div>
+        </div>
+      </div> -->
+
       <section class="mt-6 md:mt-10">
         <h2 class="text-xl font-bold border-b border-gray-300 pb-1 mb-2">SKILLS</h2>
         <ul class="list-disc list-inside text-white leading-relaxed text-sm md:text-base">
@@ -59,7 +606,85 @@
         </ul>
       </section>
 
-      <!-- Languages -->
+      <!-- Other sections remain unchanged -->
+      <!-- <div class="cv-section">
+        <h3>Certifications & Training <button class="add-item-btn" data-section="certifications">+ Add</button></h3>
+        <ul>
+          <li>Completed Brand Yourself "training".</li>
+          <li>Presented Research paper at the 5th National Research Symposium and 8th ICMR.</li>
+          <li>Represent LAC in 6th international cultural and literary festival in Al-hamra.</li>
+        </ul>
+      </div>
+
+      <div class="cv-section">
+        <h3>Technical Proficiencies <button class="add-item-btn" data-section="technical">+ Add</button></h3>
+        <ul>
+          <li>Advanced Excel, PowerPoint, Primavera and QuickBooks.</li>
+        </ul>
+      </div>
+
+      <div class="cv-section">
+        <h3>Multilingual Communication <button class="add-item-btn" data-section="languages">+ Add</button></h3>
+        <ul>
+          <li>Fluent in English/Urdu (written & spoken), Pashto (native), Punjabi conversational and Arabic
+            Basic.</li>
+        </ul>
+      </div>
+
+      <div class="cv-section">
+        <h3>Curriculum Projects <button class="add-item-btn" data-section="curriculum">+ Add</button></h3>
+        <ul>
+          <li>How Pakistan will become an Asian tiger.</li>
+          <li>What I want to be and how.</li>
+          <li>SWOT analysis of Pepsi Cola Company.</li>
+          <li>Emotional intelligence (EQ) and intelligence quotient (IQ).</li>
+          <li>Major challenges to the Pakistan's economy roots cause and solutions.</li>
+          <li>Different political systems and economic systems.</li>
+        </ul>
+      </div>
+
+      <div class="cv-section">
+        <h3>During Studies Achievements <button class="add-item-btn" data-section="achievements">+ Add</button></h3>
+        <ul>
+          <li>Member of SOCC (student quality control circle).</li>
+          <li>Speech front-runner. (Urdu speech).</li>
+          <li>Winner punctuality award in SPS College.</li>
+          <li>Member of MBTI (personality's tests conduction) later on leads the team.</li>
+          <li>Debater on Pakistan kese SA kam nahe in Kohinoor youth forum. (Kohinoor channel).</li>
+        </ul>
+      </div> -->
+
+      <!-- <div class="cv-section">
+        <h3></h3>
+        <p><strong>FACTORS INFLUENCING THE CAPITAL STRUCTURE CHOICE OF KARACHI STOCK EXCHANGE (KSE100)</strong>
+        </p>
+        <p><a href="https://ijciss.org/index.php/ijciss/article/view/671"
+            target="_blank">https://ijciss.org/index.php/ijciss/article/view/671</a></p>
+        <p>Published in (International Journal of contemporary issues in social sciences)</p>
+      </div> -->
+
+      
+      <!-- PROJECTS -->
+      <div class="mb-6">
+        <h2 class="text-2xl md:text-3xl font-bold text-[#0b1c3f] mb-2">Projects</h2>
+        <p class="text-sm md:text-base leading-6">
+          <strong>FK FRUIT STORE</strong><br>
+          Frontend | TailwindCSS | React.js<br>
+          Frontend | TailwindCSS | React.js<br>
+          <a class="text-blue-600 break-words" href="https://fru.vercel.app/">https://fru.vercel.app/</a>
+        </p>
+        <p class="text-sm md:text-base leading-6 mt-2">
+          <strong>Fayaz FAST FOOD</strong><br>
+          Frontend | TailwindCSS | React.js<br>
+          <a class="text-blue-600 break-words" href="https://food-eight-ashy-57.vercel.app/">https://food-eight-ashy-57.vercel.app/</a>
+        </p>
+        <p class="text-sm md:text-base leading-6 mt-2">
+          <strong>Farming Association</strong><br>
+          Frontend | Bootstrap | JavaScript<br>
+          Backend | Laravel | MySQL
+        </p>
+      </div>
+       
       <section class="mt-6 md:mt-10">
         <h2 class="text-lg font-bold border-b border-gray-300 pb-1 mb-2">LANGUAGES</h2>
         <ul class="list-disc list-inside text-white leading-relaxed text-sm md:text-base">
@@ -68,89 +693,381 @@
           <li>Pashto: Mother Tongue</li>
         </ul>
       </section>
+
+      
+
+      <!-- Custom sections will be added here -->
+      <div id="custom-sections"></div>
     </div>
 
-    <!-- Right Section -->
-    <div class="lg:w-2/3 p-6 md:p-8 text-gray-900">
-      <!-- Profile -->
-      <div class="mb-6 md:mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold text-[#0b1c3f] mb-2">Profile</h2>
-        <h3 class="text-[#0b1c3f] font-semibold mb-1">Personal Details</h3>
-        <div class="flex flex-wrap text-sm md:text-base text-gray-700 gap-x-6 gap-y-2">
-          <div><strong>Date of Birth:</strong> August 03<sup>rd</sup>, 1999</div>
-          <div><strong>Gender:</strong> Male</div>
-          <div><strong>Nationality:</strong> Pakistan</div>
-        </div>
-        <h2 class="text-xl md:text-2xl font-bold border-b border-gray-300 pb-1 mb-2 mt-4">PROFESSIONAL SUMMARY</h2>
-        <p class="mt-2 text-[14px] md:text-[16px] leading-6 md:leading-7">
-          Results-driven MERN Stack Developer and Software Engineering Graduate from COMSATS University Islamabad, Abbottabad Campus, with 2+ years of professional experience in both backend and frontend web development. Proficient in Node.js, Express.js, MongoDB, and React.js. Possesses strong analytical and problem-solving skills, with a passion for writing clean, scalable code and developing efficient, user-friendly web applications.
-        </p>
-      </div>
+    <!-- <footer>
+            <p>Interactive CV - Irshad Ahmad</p>
+        </footer> -->
+  </div>
 
-      <!-- Education -->
-      <div class="mb-6">
-        <h2 class="text-xl md:text-2xl font-bold text-[#0b1c3f] mb-2 border-b border-gray-300 pb-1">Education</h2>
-        <div class="mb-3">
-          <h3 class="text-base md:text-lg font-semibold">BS Software Engineering</h3>
-          <p class="text-xs md:text-sm text-gray-700">
-            COMSATS University Islamabad – Abbottabad Campus<br>
-            <span class="text-gray-500">2018 – 2022</span>
-          </p>
-        </div>
-        <div class="mb-3">
-          <h3 class="text-base md:text-lg font-semibold">Pre-Engineering</h3>
-          <p class="text-xs md:text-sm text-gray-700">
-            Government Post Graduate Jahanzeb College, Swat<br>
-            <span class="text-gray-500">2016 – 2018</span>
-          </p>
-        </div>
-        <div>
-          <h3 class="text-base md:text-lg font-semibold">Matriculation (Science)</h3>
-          <p class="text-xs md:text-sm text-gray-700">
-            Swat Children Academy, Mingora<br>
-            <span class="text-gray-500">2014 – 2016</span>
-          </p>
-        </div>
-      </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const addSectionBtn = document.getElementById('add-section-btn');
+      const editBtn = document.getElementById('edit-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const sectionForm = document.getElementById('section-form');
+      const itemForm = document.getElementById('item-form');
+      const customSectionForm = document.getElementById('custom-section-form');
+      const itemFormContent = document.getElementById('item-form-content');
+      const cancelSectionBtn = document.getElementById('cancel-section-btn');
+      const cancelItemBtn = document.getElementById('cancel-item-btn');
+      const customSectionsContainer = document.getElementById('custom-sections');
+      const cvContent = document.getElementById('cv-content');
+      const cvHeader = document.getElementById('cv-header');
+      const addItemButtons = document.querySelectorAll('.add-item-btn');
+      const itemSectionSelect = document.getElementById('item-section');
+      const dateGroup = document.getElementById('date-group');
 
-      <!-- Work Experience -->
-      <section class="mb-6">
-        <h2 class="text-xl md:text-2xl font-bold border-b border-gray-300 pb-1 mb-2">WORK EXPERIENCE</h2>
+      // Helper: make header elements editable
+      function enableHeaderEditing() {
+        const headerElements = cvHeader.querySelectorAll('h1, h2, a, span');
+        headerElements.forEach(el => {
+          el.contentEditable = 'true';
+          el.style.outline = '1px dashed rgba(255,255,255,0.5)';
+        });
+      }
 
-        <div class="mb-4 md:mb-6">
-          <h3 class="text-lg md:text-xl font-semibold">Backend Developer <span class="text-gray-700">| MAX Tech, Swat</span></h3>
-          <p class="text-sm md:text-base text-gray-600 mb-2">April 2025 – Present</p>
-          <ul class="list-disc list-inside text-gray-700 leading-relaxed text-sm md:text-base">
-            <li>Develop RESTful APIs using Node.js and Express.js.</li>
-            <li>Designed optimized MongoDB schemas for high performance.</li>
-            <li>Implemented JWT-based authentication and authorization.</li>
-            <li>Integrated third-party APIs to extend functionality.</li>
-            <li>Collaborated with frontend teams for API integration.</li>
-          </ul>
-        </div>
+      // Helper: disable header editing
+      function disableHeaderEditing() {
+        const headerElements = cvHeader.querySelectorAll('h1, h2, a, span');
+        headerElements.forEach(el => {
+          el.contentEditable = 'false';
+          el.style.outline = 'none';
+        });
+      }
 
-        <div class="mb-4 md:mb-6">
-          <h3 class="text-lg md:text-xl font-semibold">Frontend Developer <span class="text-gray-700">| MAX Tech, Swat</span></h3>
-          <p class="text-sm md:text-base text-gray-600 mb-2">Feb 2024 – Mar 2025</p>
-          <ul class="list-disc list-inside text-gray-700 leading-relaxed text-sm md:text-base">
-            <li>Developed responsive UIs using React.js and Tailwind CSS.</li>
-            <li>Optimized performance and reduced load times by 40%.</li>
-            <li>Worked closely with backend teams for dynamic features.</li>
-            <li>Ensured cross-browser and mobile compatibility.</li>
-          </ul>
-        </div>
+      // Helper: make experience and education sections preserve structure
+      function preserveSectionStructure() {
+        const experienceItems = cvContent.querySelectorAll('.experience-item');
+        experienceItems.forEach(item => {
+          // Ensure the structure is maintained
+          if (!item.querySelector('.experience-date')) {
+            const dateDiv = document.createElement('div');
+            dateDiv.className = 'experience-date';
+            dateDiv.textContent = 'Date';
+            item.prepend(dateDiv);
+          }
+          if (!item.querySelector('.experience-content')) {
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'experience-content';
+            Array.from(item.children).forEach(child => {
+              if (!child.classList.contains('experience-date')) {
+                contentDiv.appendChild(child);
+              }
+            });
+            item.appendChild(contentDiv);
+          }
+        });
+      }
 
-        <div>
-          <h3 class="text-lg md:text-xl font-semibold">Junior Web Developer <span class="text-gray-700">| Freelance</span></h3>
-          <p class="text-sm md:text-base text-gray-600 mb-2">Jan 2023 – Dec 2023</p>
-          <ul class="list-disc list-inside text-gray-700 leading-relaxed text-sm md:text-base">
-            <li>Built portfolio websites using MERN stack.</li>
-            <li>Performed testing and debugging before client delivery.</li>
-            <li>Delivered tailored web solutions based on client needs.</li>
-          </ul>
-        </div>
-      </section>
+      // Helper: make any custom-section elements editable when inside cvContent
+      function enableEditableCustomSections() {
+        const sections = cvContent.querySelectorAll('.custom-section');
+        sections.forEach(s => s.contentEditable = 'true');
+      }
 
-      <!-- Projects -->
-      <div class="mb-6">
-        <h2 class="text-2xl md:text-3xl font-b
+      // Load saved content if available
+      try {
+        const savedHeader = localStorage.getItem('cvHeaderHtml');
+        const savedContent = localStorage.getItem('cvContentHtml');
+
+        if (savedHeader) {
+          cvHeader.innerHTML = savedHeader;
+        }
+        if (savedContent) {
+          cvContent.innerHTML = savedContent;
+          // Re-preserve structure for loaded content
+          preserveSectionStructure();
+          // re-enable editing for loaded custom sections
+          enableEditableCustomSections();
+        }
+      } catch (e) {
+        // localStorage may be unavailable in some environments; fail silently
+        console.warn('Could not access localStorage:', e);
+      }
+
+      // Toggle section form visibility
+      addSectionBtn.addEventListener('click', function () {
+        sectionForm.classList.toggle('active');
+      });
+
+      // Cancel adding section
+      cancelSectionBtn.addEventListener('click', function () {
+        sectionForm.classList.remove('active');
+        customSectionForm.reset();
+      });
+
+      // Cancel adding item
+      cancelItemBtn.addEventListener('click', function () {
+        itemForm.classList.remove('active');
+        itemFormContent.reset();
+      });
+
+      // Add custom section
+      customSectionForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const title = document.getElementById('section-title').value;
+        const content = document.getElementById('section-content').value;
+
+        if (title && content) {
+          const sectionDiv = document.createElement('div');
+          sectionDiv.className = 'custom-section';
+
+          const sectionTitle = document.createElement('h4');
+          sectionTitle.textContent = title;
+
+          const sectionContent = document.createElement('p');
+          sectionContent.textContent = content;
+
+          sectionDiv.appendChild(sectionTitle);
+          sectionDiv.appendChild(sectionContent);
+
+          // Make the new custom section editable (when cv-content is editable)
+          sectionDiv.contentEditable = 'true';
+          customSectionsContainer.appendChild(sectionDiv);
+
+          // Reset form and hide it
+          customSectionForm.reset();
+          sectionForm.classList.remove('active');
+        }
+      });
+
+      // Show item form when add button is clicked
+      addItemButtons.forEach(button => {
+        button.addEventListener('click', function () {
+          const sectionType = this.getAttribute('data-section');
+          itemSectionSelect.value = sectionType;
+
+          // Show/hide date field based on section type
+          if (sectionType === 'experience' || sectionType === 'education') {
+            dateGroup.style.display = 'block';
+          } else {
+            dateGroup.style.display = 'none';
+          }
+
+          itemForm.classList.add('active');
+        });
+      });
+
+      // Add item to section
+      itemFormContent.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const sectionType = document.getElementById('item-section').value;
+        const date = document.getElementById('item-date').value;
+        const title = document.getElementById('item-title').value;
+        const subtitle = document.getElementById('item-subtitle').value;
+        const description = document.getElementById('item-description').value;
+
+        if (sectionType && title) {
+          let newItem;
+
+          if (sectionType === 'experience') {
+            newItem = createExperienceItem(date, title, subtitle, description);
+          } else if (sectionType === 'education') {
+            newItem = createEducationItem(date, title, subtitle, description);
+          } else {
+            newItem = createListItem(title, description);
+          }
+
+          // Find the target section and append the new item
+          const targetSection = findSectionByType(sectionType);
+          if (targetSection) {
+            targetSection.appendChild(newItem);
+          }
+
+          // Reset form and hide it
+          itemFormContent.reset();
+          itemForm.classList.remove('active');
+        }
+      });
+
+      // Helper function to create experience item
+      function createExperienceItem(date, title, company, description) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'experience-item';
+
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'experience-date';
+        dateDiv.textContent = date || 'Date';
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'experience-content';
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'job-title';
+        titleDiv.textContent = title;
+
+        const companyDiv = document.createElement('div');
+        companyDiv.className = 'company';
+        companyDiv.textContent = company || '';
+
+        contentDiv.appendChild(titleDiv);
+        contentDiv.appendChild(companyDiv);
+
+        if (description) {
+          const ul = document.createElement('ul');
+          const lines = description.split('\n');
+          lines.forEach(line => {
+            if (line.trim()) {
+              const li = document.createElement('li');
+              li.textContent = line.trim();
+              ul.appendChild(li);
+            }
+          });
+          contentDiv.appendChild(ul);
+        }
+
+        itemDiv.appendChild(dateDiv);
+        itemDiv.appendChild(contentDiv);
+
+        return itemDiv;
+      }
+
+      // Helper function to create education item
+      function createEducationItem(date, title, institution, description) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'education-item';
+
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'education-date';
+        dateDiv.textContent = date || 'Date';
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'education-content';
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'education-title';
+        titleDiv.textContent = title;
+
+        const institutionDiv = document.createElement('div');
+        institutionDiv.className = 'education-institution';
+        institutionDiv.textContent = institution || '';
+
+        contentDiv.appendChild(titleDiv);
+        contentDiv.appendChild(institutionDiv);
+
+        if (description) {
+          const p = document.createElement('p');
+          p.textContent = description;
+          contentDiv.appendChild(p);
+        }
+
+        itemDiv.appendChild(dateDiv);
+        itemDiv.appendChild(contentDiv);
+
+        return itemDiv;
+      }
+
+      // Helper function to create list item
+      function createListItem(title, description) {
+        const li = document.createElement('li');
+        li.textContent = title;
+
+        if (description) {
+          const details = document.createElement('span');
+          details.textContent = ' - ' + description;
+          li.appendChild(details);
+        }
+
+        return li;
+      }
+
+      // Helper function to find section by type
+      function findSectionByType(sectionType) {
+        const sections = {
+          'experience': document.querySelector('.cv-section:nth-child(2)'),
+          'education': document.querySelector('.cv-section:nth-child(3)'),
+          'skills': document.querySelector('.cv-section:nth-child(4)'),
+          'certifications': document.querySelector('.cv-section:nth-child(5)'),
+          'technical': document.querySelector('.cv-section:nth-child(6)'),
+          'languages': document.querySelector('.cv-section:nth-child(7)'),
+          'curriculum': document.querySelector('.cv-section:nth-child(8)'),
+          'achievements': document.querySelector('.cv-section:nth-child(9)')
+        };
+
+        return sections[sectionType];
+      }
+
+      // Edit CV in browser (toggle contentEditable)
+      editBtn.addEventListener('click', function () {
+        const isEditing = cvContent.isContentEditable;
+
+        if (!isEditing) {
+          // Enter edit mode
+          cvContent.contentEditable = 'true';
+          cvContent.classList.add('editing');
+          cvHeader.classList.add('editing');
+          enableHeaderEditing();
+          editBtn.textContent = 'Save Edits';
+          // Disable downloading while editing
+          downloadBtn.disabled = true;
+        } else {
+          // Exit edit mode and save
+          cvContent.contentEditable = 'false';
+          cvContent.classList.remove('editing');
+          cvHeader.classList.remove('editing');
+          disableHeaderEditing();
+          editBtn.textContent = 'Edit CV';
+          downloadBtn.disabled = false;
+
+          // Preserve structure before saving
+          preserveSectionStructure();
+
+          try {
+            localStorage.setItem('cvHeaderHtml', cvHeader.innerHTML);
+            localStorage.setItem('cvContentHtml', cvContent.innerHTML);
+          } catch (e) {
+            console.warn('Could not save to localStorage:', e);
+          }
+
+          // small visual confirmation
+          editBtn.textContent = 'Saved';
+          setTimeout(() => { editBtn.textContent = 'Edit CV'; }, 900);
+        }
+      });
+
+      // Download as PDF
+      downloadBtn.addEventListener('click', function () {
+        // Temporarily disable editing for PDF generation
+        const wasEditing = cvContent.isContentEditable;
+        if (wasEditing) {
+          cvContent.contentEditable = 'false';
+          cvContent.classList.remove('editing');
+          cvHeader.classList.remove('editing');
+          disableHeaderEditing();
+        }
+
+        // Ensure structure is preserved before PDF generation
+        preserveSectionStructure();
+
+        const element = document.body;
+        const options = {
+          margin: 10,
+          filename: 'Irshad_Ahmad_CV.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(options).from(element).save().then(() => {
+          // Restore editing state if it was enabled
+          if (wasEditing) {
+            cvContent.contentEditable = 'true';
+            cvContent.classList.add('editing');
+            cvHeader.classList.add('editing');
+            enableHeaderEditing();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
