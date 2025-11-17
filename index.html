@@ -28,23 +28,21 @@
     body {
       line-height: 1.6;
       margin: 30px;
+      background-color: #f5f7fa;
     }
 
     .container {
       max-width: 797px;
       margin: 0 auto;
-      padding: 20px;
       padding: 30px;
+      background: white;
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
     }
 
     header {
       padding-top: 30px;
       border-radius: var(--border-radius);
-    }
-
-    header.editing {
-      outline: 3px dashed var(--secondary-color);
-      outline-offset: 6px;
     }
 
     .header-content {
@@ -58,6 +56,7 @@
       font-size: 2rem;
       margin-bottom: 5px;
       font-style: italic;
+      color: var(--primary-color);
     }
 
     .personal-info h2 {
@@ -66,6 +65,7 @@
       margin-bottom: 15px;
       font-style: italic;
       color: gray;
+      font-weight: bold;
     }
 
     .contact-info {
@@ -77,7 +77,9 @@
 
     .contact-info a {
       text-decoration: none;
+      color: var(--primary-color);
       transition: color 0.3s;
+      font-weight: bold;
     }
 
     .contact-info a:hover {
@@ -86,11 +88,13 @@
 
     .contact-info span {
       cursor: text;
+      color: var(--primary-color);
+      font-weight: bold;
     }
 
     .controls {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       margin-bottom: 20px;
       flex-wrap: wrap;
       gap: 10px;
@@ -119,60 +123,6 @@
       background-color: #c0392b;
     }
 
-    .cv-content.editing {
-      outline: 3px dashed var(--secondary-color);
-      outline-offset: 6px;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .section-form {
-      background-color: white;
-      padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .section-form.active {
-      display: block;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    input,
-    textarea,
-    select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-    }
-
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
     .cv-content {
       border-radius: var(--border-radius);
     }
@@ -184,27 +134,10 @@
 
     .cv-section h3 {
       color: var(--primary-color);
-      font-size: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .add-item-btn {
-      display: none;
-      background-color: var(--secondary-color);
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-left: 10px;
-    }
-
-    .cv-content.editing .add-item-btn {
-      display: inline-block;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--secondary-color);
     }
 
     /* Updated Experience Section Layout - More Specific Selectors */
@@ -284,7 +217,7 @@
     }
 
     ul {
-      padding-left: 70px;
+      padding-left: 20px;
     }
 
     li {
@@ -316,7 +249,28 @@
       font-size: 0.9rem;
     }
 
+    /* Hide controls when printing or generating PDF */
+    @media print {
+      .controls {
+        display: none !important;
+      }
+      
+      body {
+        margin: 0;
+        background: white;
+      }
+      
+      .container {
+        box-shadow: none;
+        padding: 20px;
+      }
+    }
+
     @media (max-width: 768px) {
+      body {
+        margin: 15px;
+      }
+      
       .header-content {
         flex-direction: column;
         text-align: center;
@@ -362,67 +316,7 @@
 
   <div class="container">
     <div class="controls">
-      <button id="add-section-btn">Add Custom Section</button>
-      <button id="edit-btn">Edit CV</button>
       <button id="download-btn" class="download-btn">Download as PDF</button>
-    </div>
-
-    <div id="section-form" class="section-form">
-      <h3>Add Custom Section</h3>
-      <form id="custom-section-form">
-        <div class="form-group">
-          <label for="section-title">Section Title</label>
-          <input type="text" id="section-title" required>
-        </div>
-        <div class="form-group">
-          <label for="section-content">Content</label>
-          <textarea id="section-content" required></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="button" id="cancel-section-btn">Cancel</button>
-          <button type="submit">Add Section</button>
-        </div>
-      </form>
-    </div>
-
-    <div id="item-form" class="section-form">
-      <h3>Add Item</h3>
-      <form id="item-form-content">
-        <div class="form-group">
-          <label for="item-section">Section</label>
-          <select id="item-section" required>
-            <option value="">Select a section</option>
-            <option value="experience">Experience</option>
-            <option value="education">Education</option>
-            <option value="skills">Skills</option>
-            <option value="certifications">Certifications</option>
-            <option value="technical">Technical Proficiencies</option>
-            <option value="languages">Multilingual Communication</option>
-            <option value="curriculum">Curriculum Projects</option>
-            <option value="achievements">During Studies Achievements</option>
-          </select>
-        </div>
-        <div class="form-group" id="date-group">
-          <label for="item-date">Date/Period</label>
-          <input type="text" id="item-date" placeholder="e.g., 2020 - 2024">
-        </div>
-        <div class="form-group">
-          <label for="item-title">Title</label>
-          <input type="text" id="item-title" required>
-        </div>
-        <div class="form-group">
-          <label for="item-subtitle">Subtitle/Institution/Company</label>
-          <input type="text" id="item-subtitle">
-        </div>
-        <div class="form-group">
-          <label for="item-description">Description</label>
-          <textarea id="item-description" placeholder="Enter details or bullet points (one per line)"></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="button" id="cancel-item-btn">Cancel</button>
-          <button type="submit">Add Item</button>
-        </div>
-      </form>
     </div>
 
     <header id="cv-header">
@@ -433,28 +327,26 @@
         </div>
         <div class="contact-info">
           <a href="tel:+923411190506">+923411190506</a>
-          <a href="mailto:yasinahmad919@gmail.com">yasinahmad919@gmail.com
-            <a href="https://www.linkedin.com/in/yasin-ahmad-9263331b2" target="_blank">LinkedIn Profile</a>
-            <a href="https://my-portfolio-sandy-six-67.vercel.app/"
-              class="hover:text-gray-300 border-b border-white text-base md:text-lg">My Portfolio</a>
-            <span>Mingora Swat! Pakistan.</span>
+          <a href="mailto:yasinahmad919@gmail.com">yasinahmad919@gmail.com</a>
+          <a href="https://www.linkedin.com/in/yasin-ahmad-9263331b2" target="_blank">LinkedIn Profile</a>
+          <a href="https://my-portfolio-sandy-six-67.vercel.app/">My Portfolio</a>
+          <span>Mingora Swat! Pakistan.</span>
         </div>
       </div>
     </header>
 
     <div id="cv-content" class="cv-content">
       <div class="cv-section">
-        <h3>Objective <button class="add-item-btn" data-section="objective">+ Add</button></h3>
+        <h3>Objective</h3>
         <p>Results-driven MERN Stack Developer and Software Engineering Graduate from COMSATS University Islamabad,
           Abbottabad Campus, with 2+ years of professional experience in both backend and frontend web development.
           Proficient in Node.js, Express.js, MongoDB, and React.js. Possesses strong analytical and problem-solving
           skills, with a passion for writing clean, scalable code and developing efficient, user-friendly web
           applications.</p>
-
       </div>
 
       <div class="cv-section">
-        <h3>Experience <button class="add-item-btn" data-section="experience">+ Add</button></h3>
+        <h3>Experience</h3>
 
         <div class="experience-item">
           <div class="experience-date">April 2025 – Present</div>
@@ -477,10 +369,10 @@
             <div class="job-title">Frontend Developer</div>
             <div class="company">MAX Tech, Swat</div>
             <ul>
-               <li>Developed responsive UIs using React.js and Tailwind CSS.</li>
-            <li>Optimized performance and reduced load times by 40%.</li>
-            <li>Worked closely with backend teams for dynamic features.</li>
-            <li>Ensured cross-browser and mobile compatibility.</li>
+              <li>Developed responsive UIs using React.js and Tailwind CSS.</li>
+              <li>Optimized performance and reduced load times by 40%.</li>
+              <li>Worked closely with backend teams for dynamic features.</li>
+              <li>Ensured cross-browser and mobile compatibility.</li>
             </ul>
           </div>
         </div>
@@ -492,18 +384,15 @@
             <div class="company">| Freelance</div>
             <ul>
               <li>Built portfolio websites using MERN stack.</li>
-            <li>Performed testing and debugging before client delivery.</li>
-            <li>Delivered tailored web solutions based on client needs.</li>
+              <li>Performed testing and debugging before client delivery.</li>
+              <li>Delivered tailored web solutions based on client needs.</li>
             </ul>
           </div>
         </div>
-
-        
-
-        
+      </div>
 
       <div class="cv-section">
-        <h3>Education <button class="add-item-btn" data-section="education">+ Add</button></h3>
+        <h3>Education</h3>
         <div class="education-item">
           <div class="education-date">2018 – 2022</div>
           <div class="education-content">
@@ -527,544 +416,77 @@
             <div class="education-institution">Swat Children Academy, Mingora</div>
           </div>
         </div>
+      </div>
 
-       
-
-      <!-- Rest of the CV sections remain the same -->
-      <!-- <div class="cv-section">
-        <h3>Skills & Abilities <button class="add-item-btn" data-section="skills">+ Add</button></h3>
-        <div class="skills-grid">
-          <div class="skill-category">
-            <h4>Financial Reporting and Analysis</h4>
-            <ul>
-              <li>Expertise in preparing GAAP-compliant financial statements (P&L, balance sheets, cash
-                flow) with 100% accuracy.</li>
-              <li>Skilled in reconciling accounts payable/receivable and auditing inventory (e.g., 98%
-                accuracy at Shaharyar Traders).</li>
-              <li>Conducted internal audits for 10+ branches, resolving discrepancies and improving
-                compliance by 30%.</li>
-              <li>Familiar with IFRS, TIA/EIA standards, and Saudi Arabian financial regulations.</li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <h4>Accounting Software</h4>
-            <ul>
-              <li>Proficient in QuickBooks, Primavera, and advanced Excel for financial modeling, reducing
-                monthly closing time by 20%.</li>
-              <li>Experienced in automating workflows to minimize manual errors and enhance reporting
-                efficiency.</li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <h4>Budgeting & Forecasting</h4>
-            <ul>
-              <li>Developed budget frameworks for IPO accounts and payroll management, optimizing resource
-                allocation for 200+ employees.</li>
-              <li>Analyzed foreign currency transactions to mitigate financial risks and ensure liquidity.
-              </li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <h4>Leadership & Team Management</h4>
-            <ul>
-              <li>Led cross-functional teams of 20+ educators and banquet staff, achieving 100%
-                client/student satisfaction.</li>
-              <li>Trained staff in curriculum development and conflict resolution strategies.</li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <h4>Curriculum Development & Academic Leadership</h4>
-            <ul>
-              <li>Designed SLO/ALO frameworks for 500+ students, boosting exam pass rates by 15%.</li>
-              <li>Organized international competitions (e.g., Copernicus USA) and career counseling
-                workshops.</li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <h4>Research & Problem Solving</h4>
-            <ul>
-              <li>Published peer-reviewed research on capital structure dynamics (KSE100 Study).</li>
-              <li>Conducted SWOT analysis of PepsiCo and authored projects on Pakistan's economic
-                challenges.</li>
-            </ul>
-          </div>
-        </div>
-      </div> -->
-
-      <section class="mt-6 md:mt-10">
-        <h2 class="text-xl font-bold border-b border-gray-300 pb-1 mb-2">SKILLS</h2>
-        <ul class="list-disc list-inside text-white leading-relaxed text-sm md:text-base">
+      <div class="cv-section">
+        <h3>Skills</h3>
+        <ul>
           <li><strong>Backend:</strong> Node.js, Express.js, MongoDB, RESTful APIs, JWT, Authentication</li>
           <li><strong>Frontend:</strong> React.js, Redux, Tailwind CSS, JavaScript (ES6+), HTML5, CSS3</li>
           <li><strong>Tools:</strong> GitHub, VS Code, npm, Netlify</li>
           <li><strong>Soft Skills:</strong> Problem Solving, Team Collaboration, Debugging, Communication</li>
         </ul>
-      </section>
-
-      <!-- Other sections remain unchanged -->
-      <!-- <div class="cv-section">
-        <h3>Certifications & Training <button class="add-item-btn" data-section="certifications">+ Add</button></h3>
-        <ul>
-          <li>Completed Brand Yourself "training".</li>
-          <li>Presented Research paper at the 5th National Research Symposium and 8th ICMR.</li>
-          <li>Represent LAC in 6th international cultural and literary festival in Al-hamra.</li>
-        </ul>
       </div>
 
       <div class="cv-section">
-        <h3>Technical Proficiencies <button class="add-item-btn" data-section="technical">+ Add</button></h3>
-        <ul>
-          <li>Advanced Excel, PowerPoint, Primavera and QuickBooks.</li>
-        </ul>
-      </div>
-
-      <div class="cv-section">
-        <h3>Multilingual Communication <button class="add-item-btn" data-section="languages">+ Add</button></h3>
-        <ul>
-          <li>Fluent in English/Urdu (written & spoken), Pashto (native), Punjabi conversational and Arabic
-            Basic.</li>
-        </ul>
-      </div>
-
-      <div class="cv-section">
-        <h3>Curriculum Projects <button class="add-item-btn" data-section="curriculum">+ Add</button></h3>
-        <ul>
-          <li>How Pakistan will become an Asian tiger.</li>
-          <li>What I want to be and how.</li>
-          <li>SWOT analysis of Pepsi Cola Company.</li>
-          <li>Emotional intelligence (EQ) and intelligence quotient (IQ).</li>
-          <li>Major challenges to the Pakistan's economy roots cause and solutions.</li>
-          <li>Different political systems and economic systems.</li>
-        </ul>
-      </div>
-
-      <div class="cv-section">
-        <h3>During Studies Achievements <button class="add-item-btn" data-section="achievements">+ Add</button></h3>
-        <ul>
-          <li>Member of SOCC (student quality control circle).</li>
-          <li>Speech front-runner. (Urdu speech).</li>
-          <li>Winner punctuality award in SPS College.</li>
-          <li>Member of MBTI (personality's tests conduction) later on leads the team.</li>
-          <li>Debater on Pakistan kese SA kam nahe in Kohinoor youth forum. (Kohinoor channel).</li>
-        </ul>
-      </div> -->
-
-      <!-- <div class="cv-section">
-        <h3></h3>
-        <p><strong>FACTORS INFLUENCING THE CAPITAL STRUCTURE CHOICE OF KARACHI STOCK EXCHANGE (KSE100)</strong>
-        </p>
-        <p><a href="https://ijciss.org/index.php/ijciss/article/view/671"
-            target="_blank">https://ijciss.org/index.php/ijciss/article/view/671</a></p>
-        <p>Published in (International Journal of contemporary issues in social sciences)</p>
-      </div> -->
-
-      
-      <!-- PROJECTS -->
-      <div class="mb-6">
-        <h2 class="text-2xl md:text-3xl font-bold text-[#0b1c3f] mb-2">Projects</h2>
-        <p class="text-sm md:text-base leading-6">
+        <h3>Projects</h3>
+        <p>
           <strong>FK FRUIT STORE</strong><br>
           Frontend | TailwindCSS | React.js<br>
-          
-          <a class="text-blue-600 break-words" href="https://fru.vercel.app/">https://fru.vercel.app/</a>
+          <a href="https://fru.vercel.app/">https://fru.vercel.app/</a>
         </p>
-        <p class="text-sm md:text-base leading-6 mt-2">
+        <p style="margin-top: 10px;">
           <strong>Fayaz FAST FOOD</strong><br>
           Frontend | TailwindCSS | React.js<br>
-          <a class="text-blue-600 break-words" href="https://food-eight-ashy-57.vercel.app/">https://food-eight-ashy-57.vercel.app/</a>
+          <a href="https://food-eight-ashy-57.vercel.app/">https://food-eight-ashy-57.vercel.app/</a>
         </p>
-        <p class="text-sm md:text-base leading-6 mt-2">
+        <p style="margin-top: 10px;">
           <strong>Farming Association</strong><br>
           Frontend | Bootstrap | JavaScript<br>
           Backend | Laravel | MySQL
         </p>
       </div>
-       
-      <section class="mt-6 md:mt-10">
-        <h2 class="text-lg font-bold border-b border-gray-300 pb-1 mb-2">LANGUAGES</h2>
-        <ul class="list-disc list-inside text-white leading-relaxed text-sm md:text-base">
+
+      <div class="cv-section">
+        <h3>Languages</h3>
+        <ul>
           <li>English: Very Good proficiency</li>
           <li>Urdu: Excellent proficiency</li>
           <li>Pashto: Mother Tongue</li>
         </ul>
-      </section>
-
-      
-
-      <!-- Custom sections will be added here -->
-      <div id="custom-sections"></div>
+      </div>
     </div>
-
-    <!-- <footer>
-            <p>Interactive CV - Irshad Ahmad</p>
-        </footer> -->
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const addSectionBtn = document.getElementById('add-section-btn');
-      const editBtn = document.getElementById('edit-btn');
       const downloadBtn = document.getElementById('download-btn');
-      const sectionForm = document.getElementById('section-form');
-      const itemForm = document.getElementById('item-form');
-      const customSectionForm = document.getElementById('custom-section-form');
-      const itemFormContent = document.getElementById('item-form-content');
-      const cancelSectionBtn = document.getElementById('cancel-section-btn');
-      const cancelItemBtn = document.getElementById('cancel-item-btn');
-      const customSectionsContainer = document.getElementById('custom-sections');
-      const cvContent = document.getElementById('cv-content');
-      const cvHeader = document.getElementById('cv-header');
-      const addItemButtons = document.querySelectorAll('.add-item-btn');
-      const itemSectionSelect = document.getElementById('item-section');
-      const dateGroup = document.getElementById('date-group');
-
-      // Helper: make header elements editable
-      function enableHeaderEditing() {
-        const headerElements = cvHeader.querySelectorAll('h1, h2, a, span');
-        headerElements.forEach(el => {
-          el.contentEditable = 'true';
-          el.style.outline = '1px dashed rgba(255,255,255,0.5)';
-        });
-      }
-
-      // Helper: disable header editing
-      function disableHeaderEditing() {
-        const headerElements = cvHeader.querySelectorAll('h1, h2, a, span');
-        headerElements.forEach(el => {
-          el.contentEditable = 'false';
-          el.style.outline = 'none';
-        });
-      }
-
-      // Helper: make experience and education sections preserve structure
-      function preserveSectionStructure() {
-        const experienceItems = cvContent.querySelectorAll('.experience-item');
-        experienceItems.forEach(item => {
-          // Ensure the structure is maintained
-          if (!item.querySelector('.experience-date')) {
-            const dateDiv = document.createElement('div');
-            dateDiv.className = 'experience-date';
-            dateDiv.textContent = 'Date';
-            item.prepend(dateDiv);
-          }
-          if (!item.querySelector('.experience-content')) {
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'experience-content';
-            Array.from(item.children).forEach(child => {
-              if (!child.classList.contains('experience-date')) {
-                contentDiv.appendChild(child);
-              }
-            });
-            item.appendChild(contentDiv);
-          }
-        });
-      }
-
-      // Helper: make any custom-section elements editable when inside cvContent
-      function enableEditableCustomSections() {
-        const sections = cvContent.querySelectorAll('.custom-section');
-        sections.forEach(s => s.contentEditable = 'true');
-      }
-
-      // Load saved content if available
-      try {
-        const savedHeader = localStorage.getItem('cvHeaderHtml');
-        const savedContent = localStorage.getItem('cvContentHtml');
-
-        if (savedHeader) {
-          cvHeader.innerHTML = savedHeader;
-        }
-        if (savedContent) {
-          cvContent.innerHTML = savedContent;
-          // Re-preserve structure for loaded content
-          preserveSectionStructure();
-          // re-enable editing for loaded custom sections
-          enableEditableCustomSections();
-        }
-      } catch (e) {
-        // localStorage may be unavailable in some environments; fail silently
-        console.warn('Could not access localStorage:', e);
-      }
-
-      // Toggle section form visibility
-      addSectionBtn.addEventListener('click', function () {
-        sectionForm.classList.toggle('active');
-      });
-
-      // Cancel adding section
-      cancelSectionBtn.addEventListener('click', function () {
-        sectionForm.classList.remove('active');
-        customSectionForm.reset();
-      });
-
-      // Cancel adding item
-      cancelItemBtn.addEventListener('click', function () {
-        itemForm.classList.remove('active');
-        itemFormContent.reset();
-      });
-
-      // Add custom section
-      customSectionForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const title = document.getElementById('section-title').value;
-        const content = document.getElementById('section-content').value;
-
-        if (title && content) {
-          const sectionDiv = document.createElement('div');
-          sectionDiv.className = 'custom-section';
-
-          const sectionTitle = document.createElement('h4');
-          sectionTitle.textContent = title;
-
-          const sectionContent = document.createElement('p');
-          sectionContent.textContent = content;
-
-          sectionDiv.appendChild(sectionTitle);
-          sectionDiv.appendChild(sectionContent);
-
-          // Make the new custom section editable (when cv-content is editable)
-          sectionDiv.contentEditable = 'true';
-          customSectionsContainer.appendChild(sectionDiv);
-
-          // Reset form and hide it
-          customSectionForm.reset();
-          sectionForm.classList.remove('active');
-        }
-      });
-
-      // Show item form when add button is clicked
-      addItemButtons.forEach(button => {
-        button.addEventListener('click', function () {
-          const sectionType = this.getAttribute('data-section');
-          itemSectionSelect.value = sectionType;
-
-          // Show/hide date field based on section type
-          if (sectionType === 'experience' || sectionType === 'education') {
-            dateGroup.style.display = 'block';
-          } else {
-            dateGroup.style.display = 'none';
-          }
-
-          itemForm.classList.add('active');
-        });
-      });
-
-      // Add item to section
-      itemFormContent.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const sectionType = document.getElementById('item-section').value;
-        const date = document.getElementById('item-date').value;
-        const title = document.getElementById('item-title').value;
-        const subtitle = document.getElementById('item-subtitle').value;
-        const description = document.getElementById('item-description').value;
-
-        if (sectionType && title) {
-          let newItem;
-
-          if (sectionType === 'experience') {
-            newItem = createExperienceItem(date, title, subtitle, description);
-          } else if (sectionType === 'education') {
-            newItem = createEducationItem(date, title, subtitle, description);
-          } else {
-            newItem = createListItem(title, description);
-          }
-
-          // Find the target section and append the new item
-          const targetSection = findSectionByType(sectionType);
-          if (targetSection) {
-            targetSection.appendChild(newItem);
-          }
-
-          // Reset form and hide it
-          itemFormContent.reset();
-          itemForm.classList.remove('active');
-        }
-      });
-
-      // Helper function to create experience item
-      function createExperienceItem(date, title, company, description) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'experience-item';
-
-        const dateDiv = document.createElement('div');
-        dateDiv.className = 'experience-date';
-        dateDiv.textContent = date || 'Date';
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'experience-content';
-
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'job-title';
-        titleDiv.textContent = title;
-
-        const companyDiv = document.createElement('div');
-        companyDiv.className = 'company';
-        companyDiv.textContent = company || '';
-
-        contentDiv.appendChild(titleDiv);
-        contentDiv.appendChild(companyDiv);
-
-        if (description) {
-          const ul = document.createElement('ul');
-          const lines = description.split('\n');
-          lines.forEach(line => {
-            if (line.trim()) {
-              const li = document.createElement('li');
-              li.textContent = line.trim();
-              ul.appendChild(li);
-            }
-          });
-          contentDiv.appendChild(ul);
-        }
-
-        itemDiv.appendChild(dateDiv);
-        itemDiv.appendChild(contentDiv);
-
-        return itemDiv;
-      }
-
-      // Helper function to create education item
-      function createEducationItem(date, title, institution, description) {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'education-item';
-
-        const dateDiv = document.createElement('div');
-        dateDiv.className = 'education-date';
-        dateDiv.textContent = date || 'Date';
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'education-content';
-
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'education-title';
-        titleDiv.textContent = title;
-
-        const institutionDiv = document.createElement('div');
-        institutionDiv.className = 'education-institution';
-        institutionDiv.textContent = institution || '';
-
-        contentDiv.appendChild(titleDiv);
-        contentDiv.appendChild(institutionDiv);
-
-        if (description) {
-          const p = document.createElement('p');
-          p.textContent = description;
-          contentDiv.appendChild(p);
-        }
-
-        itemDiv.appendChild(dateDiv);
-        itemDiv.appendChild(contentDiv);
-
-        return itemDiv;
-      }
-
-      // Helper function to create list item
-      function createListItem(title, description) {
-        const li = document.createElement('li');
-        li.textContent = title;
-
-        if (description) {
-          const details = document.createElement('span');
-          details.textContent = ' - ' + description;
-          li.appendChild(details);
-        }
-
-        return li;
-      }
-
-      // Helper function to find section by type
-      function findSectionByType(sectionType) {
-        const sections = {
-          'experience': document.querySelector('.cv-section:nth-child(2)'),
-          'education': document.querySelector('.cv-section:nth-child(3)'),
-          'skills': document.querySelector('.cv-section:nth-child(4)'),
-          'certifications': document.querySelector('.cv-section:nth-child(5)'),
-          'technical': document.querySelector('.cv-section:nth-child(6)'),
-          'languages': document.querySelector('.cv-section:nth-child(7)'),
-          'curriculum': document.querySelector('.cv-section:nth-child(8)'),
-          'achievements': document.querySelector('.cv-section:nth-child(9)')
-        };
-
-        return sections[sectionType];
-      }
-
-      // Edit CV in browser (toggle contentEditable)
-      editBtn.addEventListener('click', function () {
-        const isEditing = cvContent.isContentEditable;
-
-        if (!isEditing) {
-          // Enter edit mode
-          cvContent.contentEditable = 'true';
-          cvContent.classList.add('editing');
-          cvHeader.classList.add('editing');
-          enableHeaderEditing();
-          editBtn.textContent = 'Save Edits';
-          // Disable downloading while editing
-          downloadBtn.disabled = true;
-        } else {
-          // Exit edit mode and save
-          cvContent.contentEditable = 'false';
-          cvContent.classList.remove('editing');
-          cvHeader.classList.remove('editing');
-          disableHeaderEditing();
-          editBtn.textContent = 'Edit CV';
-          downloadBtn.disabled = false;
-
-          // Preserve structure before saving
-          preserveSectionStructure();
-
-          try {
-            localStorage.setItem('cvHeaderHtml', cvHeader.innerHTML);
-            localStorage.setItem('cvContentHtml', cvContent.innerHTML);
-          } catch (e) {
-            console.warn('Could not save to localStorage:', e);
-          }
-
-          // small visual confirmation
-          editBtn.textContent = 'Saved';
-          setTimeout(() => { editBtn.textContent = 'Edit CV'; }, 900);
-        }
-      });
 
       // Download as PDF
       downloadBtn.addEventListener('click', function () {
-        // Temporarily disable editing for PDF generation
-        const wasEditing = cvContent.isContentEditable;
-        if (wasEditing) {
-          cvContent.contentEditable = 'false';
-          cvContent.classList.remove('editing');
-          cvHeader.classList.remove('editing');
-          disableHeaderEditing();
+        // Create a temporary clone of the container without the controls
+        const originalContainer = document.querySelector('.container');
+        const tempContainer = originalContainer.cloneNode(true);
+        
+        // Remove the controls from the temporary container
+        const tempControls = tempContainer.querySelector('.controls');
+        if (tempControls) {
+          tempControls.remove();
         }
-
-        // Ensure structure is preserved before PDF generation
-        preserveSectionStructure();
-
-        const element = document.body;
+        
         const options = {
           margin: 10,
-          filename: 'Irshad_Ahmad_CV.pdf',
+          filename: 'Yasin Ahmad_CV.pdf',
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
+          html2canvas: { 
+            scale: 2,
+            useCORS: true
+          },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(options).from(element).save().then(() => {
-          // Restore editing state if it was enabled
-          if (wasEditing) {
-            cvContent.contentEditable = 'true';
-            cvContent.classList.add('editing');
-            cvHeader.classList.add('editing');
-            enableHeaderEditing();
-          }
-        });
+        // Generate PDF from the temporary container without controls
+        html2pdf().set(options).from(tempContainer).save();
       });
     });
   </script>
